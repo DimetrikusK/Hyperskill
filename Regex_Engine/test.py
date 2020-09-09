@@ -1,5 +1,4 @@
-regex, string = input().split('|')
-if regex is string or regex == '' or regex == '.' or regex == string:
-    print(True)
-elif regex is not string:
-    print(False)
+reg = "^apple$"
+string = "apple"
+# print(reg[:-1])
+print(string[-len(reg[:-1]):])
