@@ -6,22 +6,49 @@ def main(regex, string):
     if '^' in regex or '$' in regex:
         slice(regex, string)
         exit()
+    if '?' in regex or '*' in regex or '+' in regex:
+        meta(regex, string)
+        exit()
     if regular(regex, string) is True:
         print(True)
     else:
         print(comparison(regex, string))
 
 
-def slice(regex, string):
-    if regex[0] is '^' and regex[-1] is '$':
-        if len(regex[1:-1]) == len(string):
-            print(regular(regex[1:-1], string))
+def meta(regex, string):
+    if '?' in regex:
+        if regex[0:regex.find('?')] == string[0:regex.find('?')] or regex[0:regex.find('?') - 1] == string[0:regex.find('?') - 1]:
+            print(True)
         else:
             print(False)
-    elif regex[0] is '^':
-        print(regular(regex[1:], string[0:len(regex[1:])]))
-    elif regex[-1] is '$':
-        print(regular(regex[:-1], string[-len(regex[:-1]):]))
+    if '*' in regex:
+        if regex[0:regex.find('*')] == string[0:regex.find('*')] or regex[0:regex.find('*') - 1] == string[0:regex.find('*') - 1]:
+            print(True)
+        elif
+
+
+
+
+
+def slice(regex, string):
+    if regex[0] == '^' and regex[-1] == '$':
+        if len(regex[1:-1]) == len(string):
+            if '?' in regex or '*' in regex or '+' in regex:
+                meta(regex[1:-1], string)
+            else:
+                regular(regex[1:-1], string)
+        else:
+            print(False)
+    elif regex[0] == '^':
+        if '?' in regex or '*' in regex or '+' in regex:
+            meta(regex[1:], string[0:len(regex[1:])])
+        else:
+            regular(regex[1:], string[0:len(regex[1:])])
+    elif regex[-1] == '$':
+        if '?' in regex or '*' in regex or '+' in regex:
+            meta(regex[:-1], string[-len(regex[:-1]):])
+        else:
+            regular(regex[:-1], string[-len(regex[:-1]):])
 
 
 def comparison(regex, string):
