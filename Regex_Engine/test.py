@@ -1,14 +1,29 @@
-reg = "appll?e"
-string = "appleeeee"
+regex = "col+or"
+string = "colooooor"
+# col.*r$|colors
 
-# print(string[-len(reg[:-1]):])
+print(regex[0:regex.find('+')])
+print(string[0:regex.find('+')])
+# print(string[regex.find('*') + 1:] == regex[regex.find('*') + 1:-1])
 
-print(reg[0:reg.find('?') - 1] == string[0:reg.find('?') - 1])
+# print(regex[0:regex.find('.')])
+# print(string[0:regex.find('.')])
 
-with open('/Users/jsabina/PycharmProjects/text.txt', 'w') as f:
-    f.write("SHO ZA?")
-    f.close()
 
-reader = FileReader('/Users/jsabina/PycharmProjects/text.txxt')
-text = reader.read()
-print(text)
+
+# print(regex[regex.find('*') + 1:-1])
+# print(regex[0:regex.find('*')])
+# print(string[0:regex.find('*')])
+
+# if len(regex) > len(string):
+#     if regex[0:regex.find('?')] == string[0:regex.find('?')] or regex[0:regex.find('?') - 1] == string[0:regex.find('?') - 1]:
+#         print(1)
+# else:
+#     print(0)
+# print(regex[0:regex.find('?')])
+# print(string[0:regex.find('?')])
+#
+# if regex[0:regex.find('*')] == string[0:regex.find('*')]:
+#     print(1)
+# else:
+#     print(0)
