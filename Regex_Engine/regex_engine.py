@@ -4,6 +4,12 @@ sys.setrecursionlimit(10000)
 
 
 def main(regex, string):
+    if '\\' in regex:
+        slash(regex, string)
+    if '.' or '^' or '$' or '?' or '*' or '+' not in regex:
+        if regex in string:
+            print(True)
+            exit()
     if '^' in regex or '$' in regex:
         slice(regex, string)
         exit()
@@ -16,14 +22,35 @@ def main(regex, string):
         print(comparison(regex, string))
 
 
+def slash(regex, string):
+    if regex[regex.find('\\') + 1] in string:
+        print(True)
+        exit()
+    else:
+        print(False)
+        exit()
+
+
 def meta(regex, string):
     if '?' in regex:
         if len(regex) > len(string):
             if regex[0:regex.find('?')] == string[0:regex.find('?')] or \
                     regex[0:regex.find('?') - 1] == string[0:regex.find('?') - 1]:
                 print(True)
+                exit()
+        elif not regex or not string:
+            print(True)
+            exit()
+        elif regex[0] == string[0] or regex[0] == '.':
+            if regex[1] == '?':
+                meta(regex[2:], string[1:])
+            meta(regex[1:], string[1:])
         else:
             print(False)
+            exit()
+    if not regex or not string:
+        print(True)
+        exit()
     if '*' in regex and '.' not in regex:
         if regex[0:regex.find('*')] == string[0:regex.find('*')] or \
                 regex[0:regex.find('*') - 1] == string[0:regex.find('*') - 1]:
@@ -42,17 +69,17 @@ def meta(regex, string):
         else:
             if regex[0:regex.find('+')] == string[0:regex.find('+')]:
                 print(True)
+                exit()
             else:
                 print(False)
 
 
 def slice(regex, string):
     if regex[0] == '^' and regex[-1] == '$':
-        if len(regex[1:-1]) == len(string):
-            if '?' in regex or '*' in regex or '+' in regex:
-                meta(regex[1:-1], string)
-            else:
-                regular(regex[1:-1], string)
+        if '?' in regex or '*' in regex or '+' in regex:
+            regular(regex[1:-1], string)
+        elif len(regex[1:-1]) == len(string):
+            regular(regex[1:-1], string)
         else:
             print(False)
     elif regex[0] == '^':
@@ -103,6 +130,12 @@ def regular(regex, string):
     if not regex:
         print(True)
         exit()
+    if regex[0] == '?' or regex[0] == '*' or regex[0] == '+':
+        if regex[1:] == string[-len(regex) + 1:]:
+            meta(regex, string)
+        else:
+            print(False)
+            exit()
     if regex[0] == string[0] or regex[0] == '.':
         return regular(regex[1:], string[1:])
     else:

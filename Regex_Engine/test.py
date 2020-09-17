@@ -1,9 +1,8 @@
-regex = "col+or"
-string = "colooooor"
-# col.*r$|colors
+regex = "\\.$"
+string = "end."
+# ^n.+p$|noooooooope
 
-print(regex[0:regex.find('+')])
-print(string[0:regex.find('+')])
+print(regex[regex.find('\\') + 1] in string)
 # print(string[regex.find('*') + 1:] == regex[regex.find('*') + 1:-1])
 
 # print(regex[0:regex.find('.')])
