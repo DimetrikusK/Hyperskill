@@ -41,20 +41,13 @@ Twitter and Square Chief Executive Officer Jack Dorsey
 '''
 
 
-class Browser(bloomberg_com, nytimes_com):
+class Browser:
 
-    def __init__(self, site, key):
-        self.text = str
+    def __init__(self, text, site, key):
+        self.text = text
         self.site = site
         self.key = key
         self.file_name = self.key + '/' + self.site
-
-    def chek_site(self):
-        self.site = self.site[0:self.site.find('.')]
-        if self.site in "bloomberg.com":
-            self.text = bloomberg_com
-        elif self.site in "nytimes.com":
-            self.text = nytimes_com
 
     def ft_print(self):
         with open(self.file_name, 'w') as f:
@@ -62,7 +55,20 @@ class Browser(bloomberg_com, nytimes_com):
             f.close()
 
     def __str__(self):
-        print(self.text)
+        return self.text
+
+
+def print_site(site, key):
+    site = site[0:site.find('.')]
+    if site in "bloomberg.com":
+        text = Browser(bloomberg_com, site, key)
+        text.ft_print()
+        print(text)
+    elif site in "nytimes.com":
+        text = Browser(nytimes_com, site, key)
+        text.ft_print()
+        print(text)
+    main(key)
 
 
 def main(key):
@@ -70,7 +76,7 @@ def main(key):
     while True:
         site = input()
         if '.' in site:
-            Browser(site, key)
+            print_site(site, key)
         elif site == 'exit':
             exit()
         else:
