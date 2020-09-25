@@ -1,10 +1,12 @@
+# coding: utf-8
 import os
 import argparse
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument('dir', type=str)
 key = parser.parse_args()
-os.makedirs(key.dir, exist_ok=True)
+os.makedirs(key.dir)
 
 nytimes_com = '''
 This New Liquid Is Magnetic, and Mesmerizing
@@ -46,37 +48,51 @@ def write_file(text, site):
     site_dir = '/' + site
     with open(key.dir + site_dir, 'w') as f:
         f.write(text)
-    add_site_stak(site)
+    main()
 
 
 def check_site(command):
+    global text
     site = command[0:command.find('.')]
     if "bloomberg" in site:
         print(bloomberg_com)
-        write_file(bloomberg_com, site)
+        text = bloomberg_com
+        write_file(text, site)
     elif "nytimes" in site:
         print(nytimes_com)
-        write_file(nytimes_com, site)
+        text = nytimes_com
+        write_file(text, site)
+    else:
+        print('Error: Incorrect URL')
+        main()
 
-def add_site_stak(site):
-    global stak
-    stak = [site]
+
+def add_site_stak(text, command):
+    stak.append(text)
+    check_site(command)
 
 
 def print_site_stak():
-    if len(stak) > 0:
+    if len(stak) > 1:
         print(stak.pop())
-
-
-
+    elif len(stak) == 0:
+        pass
+    else:
+        print(stak[0])
+    main()
 
 
 def main():
+    global flag
     while True:
         command = input()
         if '.com' in command:
-            check_site(command)
-        elif command is 'back':
+            if flag == 0:
+                flag += 1
+                check_site(command)
+            else:
+                add_site_stak(text, command)
+        elif "back" in command:
             print_site_stak()
         elif command == 'exit':
             exit()
@@ -84,4 +100,7 @@ def main():
             print('Error: Incorrect URL')
 
 
+flag = 0
+text = ''
+stak = []
 main()
