@@ -1,25 +1,39 @@
-import os
-import argparse
-
-parser = argparse.ArgumentParser()
-parser.add_argument('dir', type=str)
-key = parser.parse_args()
-
-nytimes_com = '''
-This New Liquid Is Magnetic, and Mesmerizing
-
-Scientists have created “soft” magnets that can flow
-and change shape, and that could be a boon to medicine
-and robotics. (Source: New York Times)
-
-
-Most Wikipedia Profiles Are of Men. This Scientist Is Changing That.
-
-Jessica Wade has added nearly 700 Wikipedia biographies for
- important female and minority scientists in less than two
- years.
-
-'''
+# class Browser(bloomberg_com, nytimes_com):
+#
+#     def __init__(self, site, key):
+#         self.text = str
+#         self.site = site
+#         self.key = key
+#         self.file_name = self.key + '/' + self.site
+#
+#     def chek_site(self):
+#         self.site = self.site[0:self.site.find('.')]
+#         if self.site in "bloomberg.com":
+#             self.text = bloomberg_com
+#         elif self.site in "nytimes.com":
+#             self.text = nytimes_com
+#
+#     def ft_print(self):
+#         with open(self.file_name, 'w') as f:
+#             f.write(self.text)
+#
+#     def __str__(self):
+#         print(self.text)
+#
+#
+# def main(key):
+#     os.makedirs(key, exist_ok=True)
+#     while True:
+#         site = input()
+#         if '.' in site:
+#             Browser(site, key)
+#         elif site == 'exit':
+#             exit()
+#         else:
+#             print('Error: Incorrect URL')
+#
+#
+# main(key.dir)
 
 bloomberg_com = '''
 The Space Race: From Apollo 11 to Elon Musk
@@ -40,47 +54,5 @@ Twitter and Square Chief Executive Officer Jack Dorsey
  Tuesday, a signal of the strong ties between the Silicon Valley giants.
 '''
 
-
-class Browser:
-
-    def __init__(self, text, site, key):
-        self.text = text
-        self.site = site
-        self.key = key
-        self.file_name = self.key + '/' + self.site
-
-    def ft_print(self):
-        with open(self.file_name, 'w') as f:
-            f.write(self.text)
-            f.close()
-
-    def __str__(self):
-        return self.text
-
-
-def print_site(site, key):
-    site = site[0:site.find('.')]
-    if site in "bloomberg.com":
-        text = Browser(bloomberg_com, site, key)
-        text.ft_print()
-        print(text)
-    elif site in "nytimes.com":
-        text = Browser(nytimes_com, site, key)
-        text.ft_print()
-        print(text)
-    main(key)
-
-
-def main(key):
-    os.makedirs(key, exist_ok=True)
-    while True:
-        site = input()
-        if '.' in site:
-            print_site(site, key)
-        elif site == 'exit':
-            exit()
-        else:
-            print('Error: Incorrect URL')
-
-
-main(key.dir)
+site_dir = '/' + bloomberg_com[0:bloomberg_com.find('_')]
+print(site_dir)

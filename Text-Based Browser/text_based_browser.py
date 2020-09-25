@@ -4,6 +4,7 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('dir', type=str)
 key = parser.parse_args()
+os.makedirs(key.dir, exist_ok=True)
 
 nytimes_com = '''
 This New Liquid Is Magnetic, and Mesmerizing
@@ -41,40 +42,46 @@ Twitter and Square Chief Executive Officer Jack Dorsey
 '''
 
 
-class Browser(bloomberg_com, nytimes_com):
-
-    def __init__(self, site, key):
-        self.text = str
-        self.site = site
-        self.key = key
-        self.file_name = self.key + '/' + self.site
-
-    def chek_site(self):
-        self.site = self.site[0:self.site.find('.')]
-        if self.site in "bloomberg.com":
-            self.text = bloomberg_com
-        elif self.site in "nytimes.com":
-            self.text = nytimes_com
-
-    def ft_print(self):
-        with open(self.file_name, 'w') as f:
-            f.write(self.text)
-            f.close()
-
-    def __str__(self):
-        print(self.text)
+def write_file(text, site):
+    site_dir = '/' + site
+    with open(key.dir + site_dir, 'w') as f:
+        f.write(text)
+    add_site_stak(site)
 
 
-def main(key):
-    os.makedirs(key, exist_ok=True)
+def check_site(command):
+    site = command[0:command.find('.')]
+    if "bloomberg" in site:
+        print(bloomberg_com)
+        write_file(bloomberg_com, site)
+    elif "nytimes" in site:
+        print(nytimes_com)
+        write_file(nytimes_com, site)
+
+def add_site_stak(site):
+    global stak
+    stak = [site]
+
+
+def print_site_stak():
+    if len(stak) > 0:
+        print(stak.pop())
+
+
+
+
+
+def main():
     while True:
-        site = input()
-        if '.' in site:
-            Browser(site, key)
-        elif site == 'exit':
+        command = input()
+        if '.com' in command:
+            check_site(command)
+        elif command is 'back':
+            print_site_stak()
+        elif command == 'exit':
             exit()
         else:
             print('Error: Incorrect URL')
 
 
-main(key.dir)
+main()
