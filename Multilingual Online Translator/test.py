@@ -22,6 +22,11 @@ def bf4(response):
     tmp = []
     string = str
 
+    for text in translete_word:
+        tmp.append((text.text.replace('\n', '').split()))
+    string = ' '.join(tmp[2])
+    print(string)
+
     #     my_str = text.text.replace('\n', '')
     #     translate_list_word += my_str.split()
     # print(translate_list_word)

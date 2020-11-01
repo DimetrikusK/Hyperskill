@@ -1,5 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
+import sys
+import argparse
 
 
 class onlineTranslator:
@@ -80,31 +82,19 @@ class onlineTranslator:
 
 
 if __name__ == '__main__':
-    print("""Hello, you're welcome to the translator. Translator supports: 
-1. Arabic
-2. German
-3. English
-4. Spanish
-5. French
-6. Hebrew
-7. Japanese
-8. Dutch
-9. Polish
-10. Portuguese
-11. Romanian
-12. Russian
-13. Turkish\n""")
-    my_language = int(input('Type the number of your language:\n'))
-    too_language = int(input("Type the number of a language you want"
-                             " to translate to or '0' to translate to all languages:\n"))
+    parser = argparse.ArgumentParser()
+    parser.add_argument("my_language", default=str)
+    parser.add_argument("too_language", type=str)
+    parser.add_argument("input_text", type=str)
+    name_key = parser.parse_args()
+    my_language = name_key.my_language
+    too_language = name_key.too_language
+    input_text = name_key.input_text
     world_lenguage = [0, 'arabic', 'german', 'english', 'spanish',
                       'french', 'hebrew', 'japanese', 'dutch', 'polish',
                       'portuguese', 'romanian', 'russian', 'turkish']
-    my_language = world_lenguage[my_language]
-    too_language = world_lenguage[too_language]
     world_lenguage.remove(my_language)
-    input_text = input('Type the word you want to translate:\n')
-    if too_language == 0:
+    if too_language == 'all':
         for i in range(1, len(world_lenguage)):
             translator = onlineTranslator(my_language, world_lenguage[i], world_lenguage, input_text)
             response = translator.request()
