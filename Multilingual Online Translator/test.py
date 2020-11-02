@@ -4,40 +4,46 @@ from bs4 import BeautifulSoup, Comment
 
 def request():
     user_agent = {'User-agent': 'Mozilla/5.0'}
-    url = f"https://context.reverso.net/translation/{'english'}-{'german'}/{'hello'}"
+    url = f"https://context.reverso.net/translation/{'english'}-{'german'}/{'hloasdasdasd'}"
     response = requests.get(url, headers=user_agent)
     bf4(response)
-
-
+#
+#
 def bf4(response):
-    translate_list_word = []
-    translate_list_text = []
+#     translate_list_word = []
+#     translate_list_text = []
+
     soup = BeautifulSoup(response.content, "html.parser")
     translete_word = soup.find_all('div', {'class': ['wide-container']})
     translete_text = soup.find_all('span', {'class': 'text'})
-    # for text in translete_text:
-    #     if len(text.text) > 30:
-    #         my_str = text.text.replace('\n', '')
-    #         translate_list_text.append(my_str.strip())
-    tmp = []
-    string = str
+    print(len(translete_text))
 
-    for text in translete_word:
-        tmp.append((text.text.replace('\n', '').split()))
-    string = ' '.join(tmp[2])
-    print(string)
-
-    #     my_str = text.text.replace('\n', '')
-    #     translate_list_word += my_str.split()
-    # print(translate_list_word)
-    # # translate_list_word = translate_list_word[2].split()
-    # text = []
-    # for i in range(0, 1):
-    #     print(translate_list_word)
-    # for i in range(0, 2):
-    #     text.append(translate_list_text)
-    #     print(text)
-
-
-request()
+#     # for text in translete_text:
+#     #     if len(text.text) > 30:
+#     #         my_str = text.text.replace('\n', '')
+#     #         translate_list_text.append(my_str.strip())
+#     tmp = []
+#     string = []
+#
+    for text in translete_text:
+        print(text.text)
+#         tmp.append(text.text.split('\n'))
+#     tmp = tmp[2]
+#     for i in tmp:
+#         if i != '':
+#             string.append(i.strip())
+#     print(string)
+#     #     my_str = text.text.replace('\n', '')
+#     #     translate_list_word += my_str.split()
+#     # print(translate_list_word)
+#     # # translate_list_word = translate_list_word[2].split()
+#     # text = []
+#     # for i in range(0, 1):
+#     #     print(translate_list_word)
+#     # for i in range(0, 2):
+#     #     text.append(translate_list_text)
+#     #     print(text)
+#
+#
+# request()
 

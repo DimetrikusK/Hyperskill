@@ -16,37 +16,41 @@ class onlineTranslator:
         user_agent = {'User-agent': 'Mozilla/5.0'}
         session = requests.Session()
         url = f"https://context.reverso.net/translation/{self.my_language}-{self.too_language}/{self.text}"
-        response = session.get(url, headers=user_agent)
-        return response
+        try:
+            response = session.get(url, headers=user_agent)
+            return response
+        except requests.exceptions.RequestException:
+            print('\nSomething wrong with your internet connection')
+            return 0
 
     def bf4(self, response):
         translate_list_word = []
         translate_list_text = []
+        tmp = []
         soup = BeautifulSoup(response.content, "html.parser")
         translete_word = soup.find_all('div', {'class': ['wide-container',
                                                          'translation ltr dict adv',
                                                          'translation ltr dict first n',
                                                          'translation ltr dict no-pos']})
         translete_text = soup.find_all('span', {'class': 'text'})
-        for text in translete_text:
-            if len(text.text) > 30:
-                my_str = text.text.replace('\n', '')
+        for text_text in translete_text:
+            if len(text_text.text) > 30:
+                my_str = text_text.text.replace('\n', '')
                 translate_list_text.append(my_str.strip())
         for text in translete_word:
-            my_str = text.text.replace('\n', '')
-            translate_list_word.append(my_str.strip())
+            tmp.append(text.text.split('\n'))
+        tmp = tmp[2]
+        for text_word in tmp:
+            if text_word != '':
+                translate_list_word.append(text_word.strip())
+        if len(translate_list_word) > 1:
+            return translate_list_word, translate_list_text
+        else:
+            return 0
 
-        try:
-            translate_list_word = translate_list_word[2].split()
-        except:
-            pass
-
-        return translate_list_word, translate_list_text
 
     def print_text(self, word, text):
-        print('200 OK', 'Translations', sep='\n')
         print('\nContext examples:\n')
-
         print(self.too_language.title(), 'Translations:')
         if len(word) > 5:
             for print_word in range(5):
@@ -69,14 +73,14 @@ class onlineTranslator:
             try:
                 print(word[0] + '\n')
                 f.write(word[0] + '\n')
-            except:
+            except IndexError:
                 pass
             print(self.too_language.title(), 'Examples:')
             f.write('\n' + self.too_language.title() + ' ' + 'Examples:\n')
             try:
                 print(f'{text[1]}:\n{text[0]}\n')
                 f.write(f'{text[1]}:\n{text[0]}\n\n')
-            except:
+            except IndexError:
                 pass
             f.close()
 
@@ -93,15 +97,28 @@ if __name__ == '__main__':
     world_lenguage = [0, 'arabic', 'german', 'english', 'spanish',
                       'french', 'hebrew', 'japanese', 'dutch', 'polish',
                       'portuguese', 'romanian', 'russian', 'turkish']
-    world_lenguage.remove(my_language)
-    if too_language == 'all':
-        for i in range(1, len(world_lenguage)):
-            translator = onlineTranslator(my_language, world_lenguage[i], world_lenguage, input_text)
+    if too_language == 'all' or too_language in world_lenguage:
+        world_lenguage.remove(my_language)
+        if too_language == 'all':
+            for i in range(1, len(world_lenguage)):
+                translator = onlineTranslator(my_language, world_lenguage[i], world_lenguage, input_text)
+                response = translator.request()
+                if response != 0:
+                    try:
+                        world, text = translator.bf4(response)
+                        translator.print_text(world, text)
+                    except TypeError:
+                        print(f'Sorry, unable to find {input_text}')
+                        exit()
+        else:
+            translator = onlineTranslator(my_language, too_language, world_lenguage, input_text)
             response = translator.request()
-            world, text = translator.bf4(response)
-            translator.save_to_file(world, text)
+            if response != 0:
+                try:
+                    world, text = translator.bf4(response)
+                    translator.print_text(world, text)
+                except TypeError:
+                    print(f'Sorry, unable to find {input_text}')
     else:
-        translator = onlineTranslator(my_language, too_language, world_lenguage, input_text)
-        response = translator.request()
-        world, text = translator.bf4(response)
-        translator.print_text(world, text)
+        print(f"Sorry, the program doesn't support {too_language}")
+
