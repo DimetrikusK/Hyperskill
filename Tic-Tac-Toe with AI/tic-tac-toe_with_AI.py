@@ -1,28 +1,105 @@
-import random
+from random import randint
 
-class TicTacToe:
 
-    def __init__(self, start_ceil, x_or_o, ceil):
-        self.ceil = ceil
-        self.start_ceil = start_ceil
-        self.x_or_o = x_or_o
+class Game:
+
+    def __init__(self, x, o):
+        self.first = x
+        self.second = o
+        self.ceil = [[' ', ' ', ' '],
+                     [' ', ' ', ' '],
+                     [' ', ' ', ' ']]
 
     def start_game(self):
-        for i in range(len(self.ceil)):
-            for j in range(len(self.ceil)):
-                if self.start_ceil[j] == '_':
-                    self.ceil[i][j] = ' '
-                else:
-                    self.ceil[i][j] = self.start_ceil[j]
-            self.start_ceil = self.start_ceil[3:]
+        save_ceil = self.ceil
+        while self.chek_wins() == 0 and self.draw() == 0:
+            self.print_ceil()
+            first_chek = self.first.move(self.ceil)
+            if first_chek == 1:
+                while first_chek == 1:
+                    self.ceil = save_ceil
+                    self.print_ceil()
+                    first_chek = self.first.move(self.ceil)
+                save_ceil = self.ceil
+            else:
+                self.print_ceil()
+                save_ceil = self.ceil
+            if self.chek_wins() != 0 or self.draw() != 0:
+                self.wins()
+            second_check = self.second.move(self.ceil)
+            if second_check == 1:
+                while second_check == 1:
+                    self.ceil = save_ceil
+                    self.print_ceil()
+                    second_check = self.second.move(self.ceil)
+                save_ceil = self.ceil
+            else:
+                self.print_ceil()
+                save_ceil = self.ceil
+            if self.chek_wins() != 0 or self.draw() != 0:
+                self.wins()
 
-    def user_move(self):
+    def wins(self):
+        if self.chek_wins() != 0:
+            print(self.chek_wins())
+            self.restart_game()
+        elif self.draw() != 0:
+            print(self.draw())
+            self.restart_game()
+
+    def restart_game(self):
+
+            self.ceil = [[' ', ' ', ' '],
+                         [' ', ' ', ' '],
+                         [' ', ' ', ' ']]
+            menu()
+
+    def chek_wins(self):
+        for i in range(0, 3):
+            if self.ceil[i][0] == self.ceil[i][1] == self.ceil[i][2]:
+                if self.ceil[i][0] != ' ':
+                    return f'{self.ceil[i][0]} wins\n'
+            if self.ceil[0][i] == self.ceil[1][i] == self.ceil[2][i]:
+                if self.ceil[0][i] != ' ':
+                    return f'{self.ceil[0][i]} wins\n'
+            if self.ceil[0][0] == self.ceil[1][1] == self.ceil[2][2]:
+                if self.ceil[0][0] != ' ':
+                    return f'{self.ceil[0][0]} wins\n'
+            if self.ceil[0][2] == self.ceil[1][1] == self.ceil[2][0]:
+                if self.ceil[0][2] != ' ':
+                    return f'{self.ceil[0][2]} wins\n'
+            return 0
+
+    def draw(self):
+        count = 0
+        for i in self.ceil:
+            for j in i:
+                if j == ' ':
+                    count += 1
+        if count == 0:
+            return "Draw\n"
+        return 0
+
+    def print_ceil(self):
+        print("---------")
+        print('| {} {} {} |'.format(self.ceil[0][0], self.ceil[0][1], self.ceil[0][2]))
+        print('| {} {} {} |'.format(self.ceil[1][0], self.ceil[1][1], self.ceil[1][2]))
+        print('| {} {} {} |'.format(self.ceil[2][0], self.ceil[2][1], self.ceil[2][2]))
+        print("---------")
+
+
+class User:
+
+    def __init__(self, move):
+        self.moveing = move
+
+    def move(self, ceil):
         count = 0
         try:
             coordinat = [int(x) for x in input('Enter the coordinates: ') if x != ' ']
             if coordinat[0] > 3 or coordinat[1] > 3:
                 print('"Coordinates should be from 1 to 3!"')
-                return 0
+                return 1
             for i in range(len(coordinat)):
                 if count == 0:
                     coordinat[i] -= 1
@@ -35,84 +112,74 @@ class TicTacToe:
                         coordinat[i] = 0
                 count += 1
             if ceil[coordinat[1]][coordinat[0]] == ' ':
-                if self.x_or_o == 'X':
-                    self.ceil[coordinat[1]][coordinat[0]] = 'X'
-                else:
-                    self.ceil[coordinat[1]][coordinat[0]] = 'O'
+                ceil[coordinat[1]][coordinat[0]] = str(self.moveing)
+                return ceil
             else:
                 print('This cell is occupied! Choose another one!')
-                return 0
+                return 1
         except ValueError:
             print("You should enter numbers!")
+            return 1
+
+
+class Ai:
+
+    def __init__(self, move):
+        self.moving = move
+
+    def move(self, ceil):
+        print('Making move level "easy"')
+        loop = True
+        while loop:
+            x = randint(0, 2)
+            y = randint(0, 2)
+            if ceil[x][y] == ' ':
+                ceil[x][y] = self.moving
+                loop = False
+        return ceil
+
+
+def validation_input(command):
+    if len(command) != 3:
+        print('Bad parameters!')
+    elif command[0] == 'exit':
+        exit()
+    if command[0] == 'start':
+        count_users = command.count('user')
+        count_ai = command.count('easy')
+        if count_users == 1 and count_ai == 1:
             return 0
+        elif count_users == 2 or count_ai == 2:
+            return 0
+        else:
+            return 1
 
-    def maove_ai(self):
 
-
-    def chek_wins(self):
-        for i in range(0, 3):
-            if self.ceil[i][0] == self.ceil[i][1] == self.ceil[i][2]:
-                if self.ceil[i][0] != ' ':
-                    return f'{self.ceil[i][0]} wins'
-            if self.ceil[0][i] == self.ceil[1][i] == self.ceil[2][i]:
-                if self.ceil[0][i] != ' ':
-                    return f'{self.ceil[0][i]} wins'
-            if self.ceil[0][0] == self.ceil[1][1] == self.ceil[2][2]:
-                if self.ceil[0][0] != ' ':
-                    return f'{self.ceil[0][0]} wins'
-            if self.ceil[0][2] == self.ceil[1][1] == self.ceil[2][0]:
-                if self.ceil[0][2] != ' ':
-                    return f'{self.ceil[0][2]} wins'
-        return 0
-
-    def draw(self):
-        count = 0
-        for i in self.ceil:
-            for j in i:
-                if j == ' ':
-                    count += 1
-        if count == 0:
-            return "Draw"
-        return 0
-
-    def print_ceil(self):
-        print("---------")
-        print('| {} {} {} |'.format(self.ceil[0][0], self.ceil[0][1], self.ceil[0][2]))
-        print('| {} {} {} |'.format(self.ceil[1][0], self.ceil[1][1], self.ceil[1][2]))
-        print('| {} {} {} |'.format(self.ceil[2][0], self.ceil[2][1], self.ceil[2][2]))
-        print("---------")
+def menu():
+    x = ''
+    o = ''
+    flag = 0
+    while True:
+        try:
+            command = input('Input command: ').split()
+            validation = validation_input(command)
+            if validation == 0:
+                if command[1] == 'user':
+                    x = User('X')
+                elif command[1] == "easy":
+                    x = Ai('X')
+                if command[2] == 'user':
+                    o = User('O')
+                elif command[2] == "easy":
+                    o = Ai('O')
+                game = Game(x, o)
+                game.start_game()
+            flag = 1
+        except IndexError:
+            print('Bad parameters!')
+        except NameError:
+            print('Bad parameters!')
 
 
 if __name__ == '__main__':
-    ceil = [[' ', ' ', ' '],
-            [' ', ' ', ' '],
-            [' ', ' ', ' ']]
-    # start_ceil = input("Enter cells: ")
-    # if start_ceil.count('X') > start_ceil.count('O'):
-    #     x_or_o = 'O'
-    # else:
-    #     x_or_o = 'X'
-    game = TicTacToe(start_ceil, x_or_o, ceil)
-    game.start_game()
-    game.print_ceil()
-    while game.chek_wins() == 0:
-        user_move = game.user_move()
-        ai_move = game.maove_ai()
-        draw = game.draw()
-        chek_wins = game.chek_wins()
-        if draw == 0:
-            if chek_wins != 0:
-                game.print_ceil()
-                print(chek_wins)
-            elif move != 0:
-                game.print_ceil()
-                print('Game not finished')
-                break
-        elif draw != 0:
-            game.print_ceil()
-            print(draw)
-            break
-
-
-
-
+    menu()
