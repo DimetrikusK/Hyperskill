@@ -12,8 +12,8 @@ class Game:
 
     def start_game(self):
         save_ceil = self.ceil
+        self.print_ceil()
         while self.chek_wins() == 0 and self.draw() == 0:
-            self.print_ceil()
             first_chek = self.first.move(self.ceil)
             if first_chek == 1:
                 while first_chek == 1:
@@ -41,18 +41,19 @@ class Game:
 
     def wins(self):
         if self.chek_wins() != 0:
+            self.print_ceil()
             print(self.chek_wins())
-            self.restart_game()
-        elif self.draw() != 0:
-            print(self.draw())
+            menu()
+        else:
             self.restart_game()
 
     def restart_game(self):
-
-            self.ceil = [[' ', ' ', ' '],
-                         [' ', ' ', ' '],
-                         [' ', ' ', ' ']]
-            menu()
+        self.print_ceil()
+        self.ceil = [[' ', ' ', ' '],
+                     [' ', ' ', ' '],
+                     [' ', ' ', ' ']]
+        print(self.draw())
+        self.start_game()
 
     def chek_wins(self):
         for i in range(0, 3):
@@ -68,7 +69,7 @@ class Game:
             if self.ceil[0][2] == self.ceil[1][1] == self.ceil[2][0]:
                 if self.ceil[0][2] != ' ':
                     return f'{self.ceil[0][2]} wins\n'
-            return 0
+        return 0
 
     def draw(self):
         count = 0
@@ -140,10 +141,11 @@ class Ai:
 
 
 def validation_input(command):
+    if command[0] == 'exit':
+        exit()
     if len(command) != 3:
         print('Bad parameters!')
-    elif command[0] == 'exit':
-        exit()
+        menu()
     if command[0] == 'start':
         count_users = command.count('user')
         count_ai = command.count('easy')
@@ -158,27 +160,26 @@ def validation_input(command):
 def menu():
     x = ''
     o = ''
-    flag = 0
-    while True:
-        try:
-            command = input('Input command: ').split()
-            validation = validation_input(command)
-            if validation == 0:
-                if command[1] == 'user':
-                    x = User('X')
-                elif command[1] == "easy":
-                    x = Ai('X')
-                if command[2] == 'user':
-                    o = User('O')
-                elif command[2] == "easy":
-                    o = Ai('O')
-                game = Game(x, o)
-                game.start_game()
-            flag = 1
-        except IndexError:
-            print('Bad parameters!')
-        except NameError:
-            print('Bad parameters!')
+    try:
+        command = input('Input command: ').split()
+        validation = validation_input(command)
+        if validation == 0:
+            if command[1] == 'user':
+                x = User('X')
+            elif command[1] == "easy":
+                x = Ai('X')
+            if command[2] == 'user':
+                o = User('O')
+            elif command[2] == "easy":
+                o = Ai('O')
+            game = Game(x, o)
+            game.start_game()
+    except IndexError:
+        print('Bad parameters!')
+        menu()
+    except NameError:
+        print('Bad parameters!')
+        menu()
 
 
 if __name__ == '__main__':
