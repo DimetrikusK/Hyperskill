@@ -2,7 +2,6 @@ from random import randint
 
 
 class Game:
-
     def __init__(self, x, o):
         self.first = x
         self.second = o
@@ -21,6 +20,7 @@ class Game:
                     self.print_ceil()
                     first_chek = self.first.move(self.ceil)
                 save_ceil = self.ceil
+                self.print_ceil()
             else:
                 self.print_ceil()
                 save_ceil = self.ceil
@@ -33,6 +33,7 @@ class Game:
                     self.print_ceil()
                     second_check = self.second.move(self.ceil)
                 save_ceil = self.ceil
+                self.print_ceil()
             else:
                 self.print_ceil()
                 save_ceil = self.ceil
@@ -41,19 +42,21 @@ class Game:
 
     def wins(self):
         if self.chek_wins() != 0:
-            self.print_ceil()
+            # self.print_ceil()
             print(self.chek_wins())
             menu()
-        else:
-            self.restart_game()
+        elif self.draw() != 0:
+            # self.print_ceil()
+            print(self.chek_wins())
+            menu()
 
-    def restart_game(self):
-        self.print_ceil()
-        self.ceil = [[' ', ' ', ' '],
-                     [' ', ' ', ' '],
-                     [' ', ' ', ' ']]
-        print(self.draw())
-        self.start_game()
+    # def restart_game(self):
+    #     self.print_ceil()
+    #     self.ceil = [[' ', ' ', ' '],
+    #                  [' ', ' ', ' '],
+    #                  [' ', ' ', ' ']]
+    #     print(self.draw())
+    #     self.start_game()
 
     def chek_wins(self):
         for i in range(0, 3):
@@ -90,7 +93,6 @@ class Game:
 
 
 class User:
-
     def __init__(self, move):
         self.moveing = move
 
@@ -124,7 +126,6 @@ class User:
 
 
 class Ai:
-
     def __init__(self, move):
         self.moving = move
 
