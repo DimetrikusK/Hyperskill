@@ -42,21 +42,11 @@ class Game:
 
     def wins(self):
         if self.chek_wins() != 0:
-            # self.print_ceil()
             print(self.chek_wins())
             menu()
         elif self.draw() != 0:
-            # self.print_ceil()
             print(self.chek_wins())
             menu()
-
-    # def restart_game(self):
-    #     self.print_ceil()
-    #     self.ceil = [[' ', ' ', ' '],
-    #                  [' ', ' ', ' '],
-    #                  [' ', ' ', ' ']]
-    #     print(self.draw())
-    #     self.start_game()
 
     def chek_wins(self):
         for i in range(0, 3):
@@ -125,7 +115,71 @@ class User:
             return 1
 
 
-class Ai:
+class MediumAi:
+    def __init__(self, move):
+        self.moving = move
+
+    def move(self, ceil):
+        print('Making move level "medium"')
+        chek_move = 0
+        flag = 0
+        if ceil.count('X') >= 2:
+            while chek_move < 2:
+                for horizont in range(len(ceil)):
+                    if ceil[horizont].count(self.moving) == 2:
+                        for i in range(len(ceil)):
+                            if ceil[horizont][i] == ' ':
+                                ceil[horizont][i] = self.moving
+                                flag += 1
+                if flag == 0:
+                    zip_ceil = []
+                    for i in zip(*ceil):
+                        zip_ceil.append(list(i))
+                    for horizont in range(len(zip_ceil)):
+                        if zip_ceil[horizont].count(self.moving) == 2:
+                            for i in range(len(zip_ceil)):
+                                if zip_ceil[horizont][i] == ' ':
+                                    zip_ceil[horizont][i] = self.moving
+                    ceil = [[], [], []]
+                    for i in range(len(zip_ceil)):
+                        for j in range(len(zip_ceil)):
+                            ceil[i].append(zip_ceil[j][i])
+                            flag += 1
+                if flag == 0:
+
+                    if ceil[0][0] == ceil[1][1] or ceil[0][0] == ceil[2][2] or ceil[1][1] == ceil[2][2]:
+                        if ceil[0][0] == ' ':
+                            ceil[0][0] = self.moving
+                        elif ceil[1][1] == ' ':
+                            ceil[1][1] = self.moving
+                        elif ceil[2][2] == ' ':
+                            ceil[2][2] = self.moving
+
+                    if ceil[0][2] == ceil[1][1] or ceil[0][2] == ceil[2][0] or ceil[2][0] == ceil[1][1]:
+                        if ceil[0][2] == ' ':
+                            ceil[0][2] = self.moving
+                        elif ceil[1][1] == ' ':
+                            ceil[1][1] = self.moving
+                        elif ceil[2][0] == ' ':
+                            ceil[2][0] = self.moving
+                if self.moving == 'X':
+                    self.moving = 'O'
+                else:
+                    self.moving = 'X'
+                flag = 0
+                chek_move += 1
+        else:
+            loop = True
+            while loop:
+                x = randint(0, 2)
+                y = randint(0, 2)
+                if ceil[x][y] == ' ':
+                    ceil[x][y] = self.moving
+                    loop = False
+        return ceil
+
+
+class EasyAi:
     def __init__(self, move):
         self.moving = move
 
@@ -147,15 +201,16 @@ def validation_input(command):
     if len(command) != 3:
         print('Bad parameters!')
         menu()
-    if command[0] == 'start':
-        count_users = command.count('user')
-        count_ai = command.count('easy')
-        if count_users == 1 and count_ai == 1:
-            return 0
-        elif count_users == 2 or count_ai == 2:
-            return 0
-        else:
-            return 1
+    return 0
+    # if command[0] == 'start':
+    #     count_users = command.count('user')
+    #     count_ai = command.count('easy')
+    #     if count_users == 1 and count_ai == 1:
+    #         return 0
+    #     elif count_users == 2 or count_ai == 2:
+    #         return 0
+    #     else:
+    #         return 1
 
 
 def menu():
@@ -168,11 +223,15 @@ def menu():
             if command[1] == 'user':
                 x = User('X')
             elif command[1] == "easy":
-                x = Ai('X')
+                x = EasyAi('X')
+            elif command[1] == 'medium':
+                x = MediumAi('X')
             if command[2] == 'user':
                 o = User('O')
             elif command[2] == "easy":
-                o = Ai('O')
+                o = EasyAi('O')
+            elif command[2] == 'medium':
+                o = MediumAi('O')
             game = Game(x, o)
             game.start_game()
     except IndexError:
