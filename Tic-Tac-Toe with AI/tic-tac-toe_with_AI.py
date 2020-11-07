@@ -22,6 +22,7 @@ class Game:
                 save_ceil = self.ceil
                 self.print_ceil()
             else:
+                self.ceil = first_chek
                 self.print_ceil()
                 save_ceil = self.ceil
             if self.chek_wins() != 0 or self.draw() != 0:
@@ -35,6 +36,7 @@ class Game:
                 save_ceil = self.ceil
                 self.print_ceil()
             else:
+                self.ceil = second_check
                 self.print_ceil()
                 save_ceil = self.ceil
             if self.chek_wins() != 0 or self.draw() != 0:
@@ -45,7 +47,7 @@ class Game:
             print(self.chek_wins())
             menu()
         elif self.draw() != 0:
-            print(self.chek_wins())
+            print(self.draw())
             menu()
 
     def chek_wins(self):
@@ -123,52 +125,64 @@ class MediumAi:
         print('Making move level "medium"')
         chek_move = 0
         flag = 0
-        if ceil.count('X') >= 2:
-            while chek_move < 2:
-                for horizont in range(len(ceil)):
-                    if ceil[horizont].count(self.moving) == 2:
-                        for i in range(len(ceil)):
-                            if ceil[horizont][i] == ' ':
-                                ceil[horizont][i] = self.moving
-                                flag += 1
-                if flag == 0:
-                    zip_ceil = []
-                    for i in zip(*ceil):
-                        zip_ceil.append(list(i))
-                    for horizont in range(len(zip_ceil)):
-                        if zip_ceil[horizont].count(self.moving) == 2:
-                            for i in range(len(zip_ceil)):
-                                if zip_ceil[horizont][i] == ' ':
-                                    zip_ceil[horizont][i] = self.moving
-                    ceil = [[], [], []]
-                    for i in range(len(zip_ceil)):
-                        for j in range(len(zip_ceil)):
-                            ceil[i].append(zip_ceil[j][i])
+        ai_move = self.moving
+        while chek_move < 2:
+            for horizont in range(len(ceil)):
+                if ceil[horizont].count(ai_move) == 2:
+                    for i in range(len(ceil)):
+                        if ceil[horizont][i] == ' ':
+                            ceil[horizont][i] = self.moving
                             flag += 1
-                if flag == 0:
+                            break
+            if flag == 0:
+                zip_ceil = []
+                for i in zip(*ceil):
+                    zip_ceil.append(list(i))
+                for horizont in range(len(zip_ceil)):
+                    if zip_ceil[horizont].count(ai_move) == 2:
+                        for i in range(len(zip_ceil)):
+                            if zip_ceil[horizont][i] == ' ':
+                                zip_ceil[horizont][i] = self.moving
+                                flag += 1
+                                break
+                ceil = [[], [], []]
+                for i in range(len(zip_ceil)):
+                    for j in range(len(zip_ceil)):
+                        ceil[i].append(zip_ceil[j][i])
 
-                    if ceil[0][0] == ceil[1][1] or ceil[0][0] == ceil[2][2] or ceil[1][1] == ceil[2][2]:
-                        if ceil[0][0] == ' ':
-                            ceil[0][0] = self.moving
-                        elif ceil[1][1] == ' ':
-                            ceil[1][1] = self.moving
-                        elif ceil[2][2] == ' ':
-                            ceil[2][2] = self.moving
+            if flag == 0:
+                if (ceil[0][0] == ai_move and ceil[1][1] == ai_move) or (
+                        ceil[0][0] == ai_move and ceil[2][2] == ai_move) \
+                        or (ceil[2][2] == ai_move and ceil[1][1] == ai_move):
+                    if ceil[0][0] == ' ':
+                        ceil[0][0] = self.moving
+                    elif ceil[1][1] == ' ':
+                        ceil[1][1] = self.moving
+                    elif ceil[2][2] == ' ':
+                        ceil[2][2] = self.moving
+                    flag += 1
 
-                    if ceil[0][2] == ceil[1][1] or ceil[0][2] == ceil[2][0] or ceil[2][0] == ceil[1][1]:
-                        if ceil[0][2] == ' ':
-                            ceil[0][2] = self.moving
-                        elif ceil[1][1] == ' ':
-                            ceil[1][1] = self.moving
-                        elif ceil[2][0] == ' ':
-                            ceil[2][0] = self.moving
-                if self.moving == 'X':
-                    self.moving = 'O'
+            if flag == 0:
+                if (ceil[0][2] == ai_move and ceil[1][1] == ai_move) or (
+                        ceil[0][2] == ai_move and ceil[2][0] == ai_move) \
+                        or (ceil[2][0] == ai_move and ceil[1][1] == ai_move):
+                    if ceil[0][2] == ' ':
+                        ceil[0][2] = self.moving
+                    elif ceil[1][1] == ' ':
+                        ceil[1][1] = self.moving
+                    elif ceil[2][0] == ' ':
+                        ceil[2][0] = self.moving
+                    flag += 1
+            if flag == 0:
+                if ai_move == 'X':
+                    ai_move = 'O'
                 else:
-                    self.moving = 'X'
-                flag = 0
+                    ai_move = 'X'
                 chek_move += 1
-        else:
+            else:
+                break
+
+        if flag == 0:
             loop = True
             while loop:
                 x = randint(0, 2)
