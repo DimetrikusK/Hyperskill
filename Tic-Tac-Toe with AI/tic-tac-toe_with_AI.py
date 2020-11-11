@@ -1,5 +1,6 @@
 from random import randint
-
+import sys
+import copy
 
 class Game:
     def __init__(self, x, o):
@@ -212,14 +213,95 @@ class MediumAi:
 class HardAi:
     def __init__(self, move):
         self.moving = move
+        self.MAX = True
+        self.MIN = False
+        if self.moving == 'X':
+            self.moving_two = 'O'
+        else:
+            self.moving_two = 'X'
+        self.scorses = {self.moving_two: -1,
+                        self.moving: 1,
+                        'deaw': 0}
 
     def move(self, ceil):
         print('Making move level "hard"')
-        self.manimax(ceil)
+        count = 0
+        for i in range(len(ceil)):
+            for j in range(len(ceil)):
+                if ceil[i][j] == ' ':
+                    count += 1
+        if count == 9:
+            ceil[1][1] = self.moving
+            return ceil
+        else:
+            best_score = -sys.maxsize
+            newCeil = copy.deepcopy(ceil)
+            player = 'X'
+            for i in range(len(newCeil)):
+                for j in range(len(newCeil)):
+                    if newCeil[i][j] == ' ':
+                        newCeil[i][j] = player
+                        score = self.minimax(newCeil, 0, self.MIN)
+                        newCeil[i][j] = ' '
+                        if score > best_score:
+                            best_score = score
+                            x, y = i, j
+            ceil[x][y] = self.moving
+            return ceil
 
-    def manimax(self, ceil):
-        pass
+    def winning(self, newCeil, player):
+        for i in range(0, 3):
+            if newCeil[i][0] == newCeil[i][1] == newCeil[i][2]:
+                if newCeil[i][0] == player:
+                    return True
+            if newCeil[0][i] == newCeil[1][i] == newCeil[2][i]:
+                if newCeil[i][0] == player:
+                    return True
+            if newCeil[0][0] == newCeil[1][1] == newCeil[2][2]:
+                if newCeil[i][0] == player:
+                    return True
+            if newCeil[0][2] == newCeil[1][1] == newCeil[2][0]:
+                if newCeil[i][0] == player:
+                    return True
+        return False
 
+    def draw(self, newCeil):
+        count = 0
+        for i in newCeil:
+            for j in i:
+                if j == ' ':
+                    count += 1
+        if count == 0:
+            return True
+        return False
+
+    def minimax(self, newCeil, deep, is_maximazing):
+        if self.winning(newCeil, self.moving_two):
+            return self.scorses[self.moving_two]
+        if self.winning(newCeil, self.moving):
+            return self.scorses[self.moving]
+        if self.draw(newCeil):
+            return self.scorses['deaw']
+
+        if is_maximazing:
+            best_score = -sys.maxsize
+            for i in range(len(newCeil)):
+                for j in range(len(newCeil)):
+                    if newCeil[i][j] == ' ':
+                        newCeil[i][j] = self.moving
+                        score = self.minimax(newCeil, deep + 1, self.MIN)
+                        newCeil[i][j] = ' '
+                        best_score = max(best_score, score)
+        else:
+            best_score = sys.maxsize
+            for i in range(len(newCeil)):
+                for j in range(len(newCeil)):
+                    if newCeil[i][j] == ' ':
+                        newCeil[i][j] = self.moving_two
+                        score = self.minimax(newCeil, deep + 1, self.MAX)
+                        newCeil[i][j] = ' '
+                        best_score = min(best_score, score)
+        return best_score
 
 
 def validation_input(command):
@@ -244,12 +326,16 @@ def menu():
                 x = EasyAi('X')
             elif command[1] == 'medium':
                 x = MediumAi('X')
+            elif command[1] == 'hard':
+                x = HardAi('X')
             if command[2] == 'user':
                 o = User('O')
             elif command[2] == "easy":
                 o = EasyAi('O')
             elif command[2] == 'medium':
                 o = MediumAi('O')
+            elif command[2] == 'hard':
+                o = HardAi('O')
             game = Game(x, o)
             game.start_game()
     except IndexError:
