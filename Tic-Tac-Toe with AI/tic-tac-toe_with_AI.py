@@ -117,6 +117,22 @@ class User:
             return 1
 
 
+class EasyAi:
+    def __init__(self, move):
+        self.moving = move
+
+    def move(self, ceil):
+        print('Making move level "easy"')
+        loop = True
+        while loop:
+            x = randint(0, 2)
+            y = randint(0, 2)
+            if ceil[x][y] == ' ':
+                ceil[x][y] = self.moving
+                loop = False
+        return ceil
+
+
 class MediumAi:
     def __init__(self, move):
         self.moving = move
@@ -193,20 +209,17 @@ class MediumAi:
         return ceil
 
 
-class EasyAi:
+class HardAi:
     def __init__(self, move):
         self.moving = move
 
     def move(self, ceil):
-        print('Making move level "easy"')
-        loop = True
-        while loop:
-            x = randint(0, 2)
-            y = randint(0, 2)
-            if ceil[x][y] == ' ':
-                ceil[x][y] = self.moving
-                loop = False
-        return ceil
+        print('Making move level "hard"')
+        self.manimax(ceil)
+
+    def manimax(self, ceil):
+        pass
+
 
 
 def validation_input(command):
@@ -216,15 +229,6 @@ def validation_input(command):
         print('Bad parameters!')
         menu()
     return 0
-    # if command[0] == 'start':
-    #     count_users = command.count('user')
-    #     count_ai = command.count('easy')
-    #     if count_users == 1 and count_ai == 1:
-    #         return 0
-    #     elif count_users == 2 or count_ai == 2:
-    #         return 0
-    #     else:
-    #         return 1
 
 
 def menu():
