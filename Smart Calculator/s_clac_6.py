@@ -1,6 +1,4 @@
 from collections import deque
-command = '3 + 4 * 2 / ( 1 - 5 )'.split()
+command = '2 * (3 + 4) + 1'
 
-
-
-print('(' in command)
+print(eval(command))
