@@ -1,66 +1,66 @@
 from collections import deque
 import copy
+import re
 
 
-def validation_input(command):
-    expression = command.split()
-    tmp = list()
-    if len(expression) == 1 and expression[0].isalpha():
-        return expression
-    for i in range(len(expression)):
-        if len(expression[i]) > 1 and expression[i][1] != '-' and expression[i][1] != '+'\
-                and expression[i][-1].isdigit() is False:
-            print('Invalid expression')
-            menu()
-        elif len(expression[i]) > 1 and expression[i][0] != expression[i][1]:
-            tmp.append(expression[i])
-        elif expression[i].isdigit() or expression[i].isalpha():
-            tmp.append(expression[i])
-        elif '-' in expression[i] and len(expression[i]) > 1:
-            if len(expression[i]) % 2 == 0:
-                tmp.append('+')
-            else:
-                tmp.append('-')
-        elif '-' in expression[i]:
-            tmp.append(expression[i])
-        elif '+' in expression[i]:
-            tmp.append('+')
-    if len(tmp) > 1 and '+' not in tmp and '-' not in tmp:
+def count_len_input(expression, value_dict):
+    count = expression.count('(') + expression.count(')')
+    if count % 2 != 0:
         print('Invalid expression')
-        menu()
-    else:
-        return tmp
-
-
-def addition(value, value_dict):
-    if len(value) == 1 and value[0].isalpha():
-        if value[0] in value_dict:
-            print(value_dict[value[0]])
-        else:
-            print('Unknown variable')
-    elif len(value) > 1:
-        flag = 0
-        count = 0
-        for i in range(len(value)):
-            if flag == 0:
-                if value[i].isdigit():
-                    count += int(value[i])
-                    flag += 1
-                elif value[i].isalpha():
-                    count += int(value_dict[value[i]])
-                    flag += 1
+        menu(value_dict)
+    if len(expression) == 1:
+        if expression[0].isalpha():
+            if expression[0] in value_dict:
+                print(value_dict[expression[0]])
+                menu(value_dict)
             else:
-                if value[i].isdigit():
-                    if value[i - 1] == '-':
-                        count -= int(value[i])
-                    elif value[i - 1] == '+':
-                        count += int(value[i])
-                elif value[i].isalpha():
-                    if value[i - 1] == '-':
-                        count -= int(value_dict[value[i]])
-                    elif value[i - 1] == '+':
-                        count += int(value_dict[value[i]])
-        print(count)
+                print('Unknown variable')
+        elif '-' in expression[0]:
+            print(expression[0])
+            menu(value_dict)
+    else:
+        return 0
+
+
+def ft_count_operator(command):
+    expression = command.split()
+    for i in range(len(expression)):
+        if '-' in expression[i] and len(expression[i]) > 1:
+            if len(expression[i]) % 2 == 0:
+                expression[i] = '+'
+            else:
+                expression[i] = '-'
+        elif '*' in expression[i] and len(expression[i]) > 1:
+            print('Invalid expression')
+            menu(value_dict)
+        elif '/' in expression[i] and len(expression[i]) > 1:
+            print('Invalid expression')
+            menu(value_dict)
+    expression = ' '.join(expression)
+    return expression
+
+
+def validation_input(command, value_dict):
+    tmp = list()
+    command = ft_count_operator(command)
+    expression = re.findall('[+-]|[*/]|[0-9]+|[()]+|[a-z]+|[A-Z]', command)
+    count_len_input(expression, value_dict)
+    for i in range(len(expression)):
+        if expression[i].isdigit():
+            tmp.append(expression[i])
+        elif expression[i].isalpha():
+            if expression[i] in value_dict:
+                tmp.append(value_dict[expression[i]])
+            else:
+                print('Unknown variable')
+        elif expression[i] == expression[i - 1]:
+            if expression[i] == '(' or expression[i] == ')':
+                tmp.append(expression[i])
+            else:
+                pass
+        else:
+            tmp.append(expression[i])
+    return tmp, value_dict
 
 
 def ft_add(command, value_dict):
@@ -83,7 +83,7 @@ def ft_add(command, value_dict):
         print('Invalid assignment')
 
 
-def ft_summa(rpn):
+def ft_summa(rpn, value_dict):
     result = list()
     if len(result) != 1:
         for i in rpn:
@@ -98,11 +98,17 @@ def ft_summa(rpn):
             elif i == '-':
                 result.append(int(result.pop(-2)) - int(result.pop(-1)))
     print(*result)
-    menu()
+    menu(value_dict)
 
 
 def chek_operat(operation, result, value):
-    if '(' not in operation:
+    if len(operation) >= 1 and operation[0] == '(':
+        operation.appendleft(value)
+    elif len(operation) >= 1:
+        if operation[0] == '+' or operation[0] == '-':
+            result.append(operation[0])
+            operation.remove(operation[0])
+            operation.appendleft(value)
         for i in operation:
             if i == '*' or i == '/':
                 result.append(i)
@@ -116,38 +122,39 @@ def chek_operat(operation, result, value):
 
 
 def addet_multiplay(value, result, operation):
-    if value == '*':
-        sim = '/'
-    else:
-        sim = '*'
-    if value in operation:
-        result.append(value)
-    elif sim in operation:
-        result.append(sim)
-        operation.remove(sim)
-        operation.appendleft(value)
+    if '(' not in operation and len(operation) >= 1:
+        if value == '*':
+            sim = '/'
+        else:
+            sim = '*'
+        if value in operation:
+            result.append(value)
+        elif sim in operation:
+            result.append(sim)
+            operation.remove(sim)
+            operation.appendleft(value)
+        else:
+            operation.appendleft(value)
     else:
         operation.appendleft(value)
     return result, operation
 
 
-def rever_pn(command):
+def revers_pn(command, value_dict):
     rpn = deque()
     operation = deque()
     if '(' in command or ')' in command:
         command = command.replace('(', '( ')
         command = command.replace(')', ' )')
-    command = validation_input(command)
+    command, value_dict = validation_input(command, value_dict)
     for value in command:
         if value.isdigit() or value.isalpha():
             rpn.append(value)
-        elif value == '( ':
+        elif value == '(':
             operation.appendleft('(')
-        # elif '(' in operation and value.isdigit() is False and value != ' )':  # 3 + 4 * 2 / (1 - 5)
-        #     result.append(value)
-        elif value == ' )':
-            copy_operatio = copy.copy(operation)
-            for i in copy_operatio:
+        elif value == ')':
+            copy_operation = copy.copy(operation)
+            for i in copy_operation:
                 if i != '(':
                     rpn.append(i)
                     operation.popleft()
@@ -155,36 +162,42 @@ def rever_pn(command):
                     operation.popleft()
                     break
         elif value == '+' or value == '-':
-            if '*' in operation or '/' in operation:
-                operation, rpn, value = chek_operat(operation, rpn, value)
-            else:
-                operation.appendleft(value)
+            operation, rpn, value = chek_operat(operation, rpn, value)
         elif value == '*' or value == '/':
             rpn, operation = addet_multiplay(value, rpn, operation)
     for i in operation:
         rpn.append(i)
-    ft_summa(rpn)
+    ft_summa(rpn, value_dict)
 
 
-def menu():
-    value_dict = dict()
+def ft_input_comand(command, value_dict):
+    input_command = re.findall('[+-]|[*/]|[0-9]+|[a-z]+', command)
+    if len(input_command) == 2:
+        if command == '/exit':
+            print('Bye')
+            exit()
+        elif command == '/help':
+            print('The program calculates the sum of numbers')
+            menu(value_dict)
+        else:
+            print('Unknown command')
+            menu(value_dict)
+    else:
+        return 0
+
+
+def menu(value_dict):
     while True:
         command = input()
         if '/' in command:
-            if command == '/exit':
-                print('Bye')
-                exit()
-            elif command == '/help':
-                print('The program calculates the sum of numbers')
-            else:
-                print('Unknown command')
-        elif command == '':
+            ft_input_comand(command, value_dict)
+        if command == '':
             pass
         elif '=' in command:
             ft_add(command, value_dict)
         else:
-            rever_pn(command)
+            revers_pn(command, value_dict)
 
 
-
-menu()
+value_dict = dict()
+menu(value_dict)
