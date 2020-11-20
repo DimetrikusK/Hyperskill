@@ -177,7 +177,7 @@ def ft_input_comand(command, value_dict):
             print('Bye')
             exit()
         elif command == '/help':
-            print('The program calculates the sum of numbers')
+            print('The program excepts the expression, determines the sign in it (double minus becomes plus), and calculates the expression')
             menu(value_dict)
         else:
             print('Unknown command')
