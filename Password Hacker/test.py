@@ -1,5 +1,10 @@
-import socket
+import itertools
 
-client_socet = socket.socket()
-address = ('127.0.0.1', 9090)
-client_socet.connect(address)
+tmp = str()
+tmp_pass = 'abcdefghijklmnopqrstuvwxyz0123456789'
+for i in range(1, 100):
+    for j in itertools.product(tmp_pass, repeat=i):
+        tmp = ''.join(j)
+        if tmp == 'pass':
+            print(tmp)
+            break
