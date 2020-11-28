@@ -2,7 +2,7 @@ import socket
 from sys import argv
 import itertools
 import json
-
+from datetime import datetime
 
 class Client:
     def __init__(self, host, port, tmp_pass, tmp_login):
@@ -33,14 +33,16 @@ class Client:
                     self.password += char
                     self.lp_json["password"] = self.password
                     message = json.dumps(self.lp_json)
+                    start = datetime.now()
                     client_socket.send(message.encode())
                     response = client_socket.recv(1024)
+                    finish = datetime.now()
                     response = response.decode()
                     response = json.loads(response)
                     if response['result'] == "Connection success!":
                         print(json.dumps(self.lp_json))
                         exit()
-                    if response['result'] != "Exception happened during login":
+                    if (finish - start).microseconds < 90000:
                         self.password = self.password[:-1]
 
 
