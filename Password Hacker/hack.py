@@ -4,6 +4,7 @@ import itertools
 import json
 from datetime import datetime
 
+
 class Client:
     def __init__(self, host, port, tmp_pass, tmp_login):
         self.host = host
